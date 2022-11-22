@@ -2,7 +2,7 @@
 
 Vous devez avoir installé sur votre machine Python 3 pour que celui-ci fonctionne.
 
-** Fonctionnement :**
+**Fonctionnement :**
 
 Notre parseur a besoin d'un argument, le dossier contenant les .pdf.
 // ange explique ici //
