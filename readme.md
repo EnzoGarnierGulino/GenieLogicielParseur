@@ -1,4 +1,4 @@
-<ins> **PARSEUR** <ins>
+**PARSEUR**
 
 <ins> **Prérequis :** <ins>
 
