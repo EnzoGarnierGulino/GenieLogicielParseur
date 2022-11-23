@@ -1,9 +1,13 @@
 #!/usr/bin/python3
 
-path = "../Corpus/"
-filename = "Torres.txt"
-fileToWrite = "resultat.txt"
+import sys
+
+path = sys.argv[1]
+filename = sys.argv[2]
+fileToWrite = sys.argv[3]
 file = path + filename
+
+
 
 ## Variables à déclarer
 
