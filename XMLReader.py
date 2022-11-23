@@ -1,14 +1,15 @@
 #!/usr/bin/python3
 
 path = "../Corpus/"
-filename = "compression.txt"
-fileToCreate = "resultat.txt"
+filename = "Torres.txt"
+fileToWrite = "resultat.txt"
 file = path + filename
 
 ## Variables à déclarer
 
 startOfBlock = 0
 endOfBlock = 0
+titleValue = 60
 
 ## Numéro du bloc qu'on veut afficher
 
@@ -57,6 +58,20 @@ def getEndOfBlock(blockNumber):
             if linesTable[j] == "</block>\n":
                 compteur = compteur + 1
   
+def getEndOfBlockWithLineNumber(lineNumber):
+    f = open(path + filename, "r")
+    lines = f.readlines()
+    nbLigneArr = lineNumber
+
+    for i in range(lineNumber, len(lines)):
+        linesTable = lines[i].split(" ")
+        nbLigneArr = nbLigneArr + 1
+
+        ## Si on entre dans un block
+        for j in range(0, len(linesTable)):
+            if linesTable[j] == "</block>\n":
+                return nbLigneArr
+
 def getContentOfBlockWithStartAndEndOfBlock(startOfBlock, endOfBlock):
     content = ""
     for i in range(startOfBlock, endOfBlock):
@@ -79,11 +94,38 @@ def getContentFromLine(lineNumber):
 
     return content
 
-def launch():   
-    initializeTxt(fileToCreate)
-    startOfBlock = getStartOfBlock(blocNumber)
-    endOfBlock = getEndOfBlock(blocNumber)
-    content = getContentOfBlockWithStartAndEndOfBlock(startOfBlock, endOfBlock)
-    writeInTxt(fileToCreate, content)
-    
+def getCoordinatesFromLine(lineNumber):
+    f = open(path + filename, "r")
+    lines = f.readlines()
+    coordinates = []
+
+    ## On supprime les lignes vides
+    lineTable = lines[lineNumber - 1].split(" ")
+
+    for i in range(0, len(lineTable)):
+        if lineTable[i].startswith("xMin") or lineTable[i].startswith("yMin") or lineTable[i].startswith("xMax") or lineTable[i].startswith("yMax"):
+            lineSplit = lineTable[i].split("=")
+            lineSplitSplit = lineSplit[1].split('"')
+            coordinates.append(lineSplitSplit[1])
+
+    return coordinates
+
+def getStartOfBlockWithYMin():   
+    f = open(path + filename, "r")
+    lines = f.readlines()
+    table = []
+
+    for i in range (0, len(lines)):
+        table = getCoordinatesFromLine(i)
+        if len(table):
+            if (float(table[1]) > titleValue):
+                return i
+
+def launch():
+    initializeTxt(fileToWrite)
+    titleFirstLine = getStartOfBlockWithYMin()
+    titleLastLine = getEndOfBlockWithLineNumber(titleFirstLine)
+    content = getContentOfBlockWithStartAndEndOfBlock(titleFirstLine, titleLastLine)
+    writeInTxt(fileToWrite, content)
+
 launch()
