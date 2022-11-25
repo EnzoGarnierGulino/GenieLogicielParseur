@@ -1,9 +1,19 @@
 #!/usr/bin/python3
 
+<<<<<<< HEAD
 path = "../Corpus/"
 filename = "mikheev.txt"
 fileToWrite = "resultat.txt"
+=======
+import sys
+
+path = sys.argv[1]
+filename = sys.argv[2]
+fileToWrite = sys.argv[3]
+>>>>>>> 9944f18e426c22f084c69829a1e234175bf34927
 file = path + filename
+
+
 
 ## Variables à déclarer
 
