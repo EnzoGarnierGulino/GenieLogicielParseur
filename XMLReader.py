@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 path = "../Corpus/"
-filename = "Torres.txt"
+filename = "mikheev.txt"
 fileToWrite = "resultat.txt"
 file = path + filename
 
@@ -10,10 +10,9 @@ file = path + filename
 startOfBlock = 0
 endOfBlock = 0
 titleValue = 60
+differenceMax = 25
 
-## Numéro du bloc qu'on veut afficher
-
-blocNumber = 6
+## Fonctions
 
 def initializeTxt(fileToCreate):
     f = open(fileToCreate, 'w').close()
@@ -57,6 +56,36 @@ def getEndOfBlock(blockNumber):
 
             if linesTable[j] == "</block>\n":
                 compteur = compteur + 1
+        
+def getNumberOfBlockWithStart(startLine):
+    f = open(path + filename, "r")
+    lines = f.readlines()
+    compteur = 0
+
+    for i in range(0, startLine):
+        linesTable = lines[i].split(" ")
+
+        for j in range(0, len(linesTable)):
+            if linesTable[j] == "<block":
+                compteur = compteur + 1
+
+    return compteur
+
+def getNumberOfLinesWhereBlockStarts():
+    f = open(path + filename, "r")
+    lines = f.readlines()
+    compteur = 0
+    blockStarts = []
+
+    for i in range(0, len(lines)):
+        linesTable = lines[i].split(" ")
+
+        for j in range(0, len(linesTable)):
+            if linesTable[j] == "<block":
+                blockStarts.append(i + 1)
+                compteur = compteur + 1
+
+    return blockStarts
   
 def getEndOfBlockWithLineNumber(lineNumber):
     f = open(path + filename, "r")
@@ -77,6 +106,25 @@ def getContentOfBlockWithStartAndEndOfBlock(startOfBlock, endOfBlock):
     for i in range(startOfBlock, endOfBlock):
         content = content + getContentFromLine(i)
     return content
+
+def getAuteurs(titreNum):
+    content = ""
+    blocksLineNumbers = getNumberOfLinesWhereBlockStarts()
+    coordinates = []
+    yMin = []
+    yMax = []
+    
+    for i in range(titreNum, len(blocksLineNumbers)):
+        coordinates = getCoordinatesFromLine(blocksLineNumbers[i])
+        yMin.append(coordinates[1])
+        yMax.append(coordinates[3])
+
+    for j in range(titreNum, len(blocksLineNumbers)):
+        blocNum = getNumberOfBlockWithStart(blocksLineNumbers[j])
+        endBlock = getEndOfBlock(blocNum)
+        content = content + getContentOfBlockWithStartAndEndOfBlock(blocksLineNumbers[j], endBlock)
+        if not abs(float(yMin[j]) - float(yMax[j-1])) < differenceMax:
+            return content
 
 def getContentFromLine(lineNumber):
     f = open(path + filename, "r")
@@ -123,9 +171,23 @@ def getStartOfBlockWithYMin():
 
 def launch():
     initializeTxt(fileToWrite)
+
+    # Titre
     titleFirstLine = getStartOfBlockWithYMin()
     titleLastLine = getEndOfBlockWithLineNumber(titleFirstLine)
-    content = getContentOfBlockWithStartAndEndOfBlock(titleFirstLine, titleLastLine)
-    writeInTxt(fileToWrite, content)
+    titrePapier = getContentOfBlockWithStartAndEndOfBlock(titleFirstLine, titleLastLine)
+    titreNum = getNumberOfBlockWithStart(titleFirstLine)
 
+    # Auteurs
+    auteurs = getAuteurs(titreNum)
+    
+    # Écriture + Mise en forme
+    writeInTxt(fileToWrite, " TITRE : ")
+    writeInTxt(fileToWrite, titrePapier)
+    writeInTxt(fileToWrite, "\n")
+    writeInTxt(fileToWrite, " AUTEURS : ")
+    writeInTxt(fileToWrite, auteurs)
+    writeInTxt(fileToWrite, "\n")
+
+# Lancer le programme
 launch()
