@@ -1,19 +1,17 @@
 #!/usr/bin/python3
 
-<<<<<<< HEAD
+# <<<<<<< HEAD
 path = "../Corpus/"
-filename = "mikheev.txt"
+filename = "ACL2004-HEADLINE.txt"
 fileToWrite = "resultat.txt"
-=======
-import sys
+# =======
+# import sys
 
-path = sys.argv[1]
-filename = sys.argv[2]
-fileToWrite = sys.argv[3]
->>>>>>> 9944f18e426c22f084c69829a1e234175bf34927
+# path = sys.argv[1]
+# filename = sys.argv[2]
+# fileToWrite = sys.argv[3]
+# >>>>>>> 9944f18e426c22f084c69829a1e234175bf34927
 file = path + filename
-
-
 
 ## Variables à déclarer
 
@@ -30,6 +28,10 @@ def initializeTxt(fileToCreate):
 def writeInTxt(fileToWrite, whatToWrite):
     with open(fileToWrite, 'a') as f:
         f.write(whatToWrite)
+
+def jumpLine(fileToWrite):
+    with open(fileToWrite, 'a') as f:
+        f.write('\n')
 
 def getStartOfBlock(blockNumber):
     f = open(path + filename, "r")
@@ -136,6 +138,21 @@ def getAuteurs(titreNum):
         if not abs(float(yMin[j]) - float(yMax[j-1])) < differenceMax:
             return content
 
+def getAbstract(absStart):
+    f = open(path + filename, "r")
+    lines = f.readlines()
+    content = ""
+    finalContent = ""
+
+    for i in range(absStart, len(lines)):
+        content = getContentFromLine(i)
+        if content != "":
+            if "Introduction" in content:
+                return finalContent
+            elif "NTRODUCTION" in content:
+                return finalContent
+        finalContent = finalContent + content      
+
 def getContentFromLine(lineNumber):
     f = open(path + filename, "r")
     lines = f.readlines()
@@ -179,6 +196,24 @@ def getStartOfBlockWithYMin():
             if (float(table[1]) > titleValue):
                 return i
 
+def getStartOfBlockWhereWord():
+    f = open(path + filename, "r")
+    lines = f.readlines()
+    found = False
+
+    for i in range(0, len(lines)):
+        linesTable = lines[i].split(" ")
+        content = ""
+
+        ## Si on croise certains mots définis dans le if
+        content = getContentFromLine(i)
+        if "Abstract" or "In" or "The" or "This" or "As" in content:
+            found = True
+
+        for j in range(0, len(linesTable)):
+            if linesTable[j] == "<block" and found == True:
+                return i + 1
+
 def launch():
     initializeTxt(fileToWrite)
 
@@ -190,14 +225,24 @@ def launch():
 
     # Auteurs
     auteurs = getAuteurs(titreNum)
+
+    # Abstract
+    absStart = getStartOfBlockWhereWord()
+    abstract = getAbstract(absStart)
     
     # Écriture + Mise en forme
     writeInTxt(fileToWrite, " TITRE : ")
     writeInTxt(fileToWrite, titrePapier)
     writeInTxt(fileToWrite, "\n")
+    jumpLine(fileToWrite)
     writeInTxt(fileToWrite, " AUTEURS : ")
     writeInTxt(fileToWrite, auteurs)
     writeInTxt(fileToWrite, "\n")
+    jumpLine(fileToWrite)
+    writeInTxt(fileToWrite, " ABSTRACT : ")
+    writeInTxt(fileToWrite, abstract)
+    writeInTxt(fileToWrite, "\n")
+    jumpLine(fileToWrite)
 
 # Lancer le programme
 launch()
