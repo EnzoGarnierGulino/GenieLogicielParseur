@@ -1,15 +1,15 @@
 #!/usr/bin/python3
 
 # <<<<<<< HEAD
-path = "../Corpus/"
-filename = "ACL2004-HEADLINE.txt"
-fileToWrite = "resultat.txt"
+# path = "../Corpus/"
+# filename = "ACL2004-HEADLINE.txt"
+# fileToWrite = "resultat.txt"
 # =======
-# import sys
+import sys
 
-# path = sys.argv[1]
-# filename = sys.argv[2]
-# fileToWrite = sys.argv[3]
+path = sys.argv[1]
+filename = sys.argv[2]
+fileToWrite = sys.argv[3]
 # >>>>>>> 9944f18e426c22f084c69829a1e234175bf34927
 file = path + filename
 
@@ -18,7 +18,7 @@ file = path + filename
 startOfBlock = 0
 endOfBlock = 0
 titleValue = 60
-differenceMax = 25
+differenceMax = 20
 
 ## Fonctions
 
@@ -230,19 +230,17 @@ def launch():
     absStart = getStartOfBlockWhereWord()
     abstract = getAbstract(absStart)
     
-    # Écriture + Mise en forme
-    writeInTxt(fileToWrite, " TITRE : ")
-    writeInTxt(fileToWrite, titrePapier)
-    writeInTxt(fileToWrite, "\n")
-    jumpLine(fileToWrite)
-    writeInTxt(fileToWrite, " AUTEURS : ")
-    writeInTxt(fileToWrite, auteurs)
-    writeInTxt(fileToWrite, "\n")
-    jumpLine(fileToWrite)
-    writeInTxt(fileToWrite, " ABSTRACT : ")
-    writeInTxt(fileToWrite, abstract)
-    writeInTxt(fileToWrite, "\n")
-    jumpLine(fileToWrite)
+    # Referencs
+    references = " "
+
+    if sys.argv[4] == "-t":
+        e = open(fileToWrite, 'w')
+        e.write(filename + ".pdf" +"\n"+ titrePapier +"\n"+ auteurs +"\n"+ abstract +"\n"+ references)
+        e.close()
+    else:
+        e = open(fileToWrite, 'w')
+        e.write("<article> \n\t<preamble> "+ filename + ".pdf" +" </preamble> \n\t<titre> "+ titrePapier +" </titre> \n\t<auteur> "+ auteurs +" </auteur> \n\t<abstract> "+ abstract +" </abstract> \n\t<biblio> "+ references +" </biblio> \n</article>")
+        e.close()
 
 # Lancer le programme
 launch()
