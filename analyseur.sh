@@ -14,13 +14,13 @@ then
     do
         options+=("$t")
         options+=("")
-        options+=(on)
+        options+=(off)
     done
     choices=$(dialog --separate-output --checklist "Selection des pdf de $dossier_origine" 22 90 16 "${options[@]}" 2>&1 >/dev/tty)
-    clear
-    echo "En Cours"
     for f in $choices
     do
+        clear
+        echo "En Cours" $f
         nom_origin=$(echo "$f" | grep -o "[^/]*$" | cut -d'.' -f1)
         if [ $type_sortie == "-t" ]
         then
@@ -30,11 +30,11 @@ then
         fi
         touch "$nom_dest"
         pdftotext -bbox-layout "$f"
-        python3 XMLReader.py "$dossier_origine" $nom_origin".html" "$nom_dest" $type_sortie
+        python3 XMLReader.py "$dossier_origine" "$nom_origin" "$nom_dest" "$type_sortie"
         rm "$dossier_origine""$nom_origin"".html"
     done
     clear
-    echo "Done"
+    echo "Success"
 else
     echo "Erreur au niveau des arguments veillez entre -t ou -x en premier argument et le dossier en deuxieme argument"
 fi
