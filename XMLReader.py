@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 # <<<<<<< HEAD
-path = "../Corpus/"
-filename = "mikheev.txt"
-fileToWrite = "resultat.txt"
+# path = "../Corpus/"
+# filename = "ACL2004-HEADLINE.txt"
+# fileToWrite = "resultat.txt"
 # =======
 import sys
 
@@ -11,7 +11,7 @@ path = sys.argv[1]
 filename = sys.argv[2]
 fileToWrite = sys.argv[3]
 # >>>>>>> 9944f18e426c22f084c69829a1e234175bf34927
-file = path + filename
+file = path + filename + ".html"
 
 ## Variables à déclarer
 
@@ -34,7 +34,7 @@ def jumpLine(fileToWrite):
         f.write('\n')
 
 def getStartOfBlock(blockNumber):
-    f = open(path + filename, "r")
+    f = open(file, "r")
     lines = f.readlines()
     compteur = 1
     nbLigneDep = 0
@@ -52,7 +52,7 @@ def getStartOfBlock(blockNumber):
                 compteur = compteur + 1
 
 def getEndOfBlock(blockNumber):
-    f = open(path + filename, "r")
+    f = open(file, "r")
     lines = f.readlines()
     compteur = 1
     nbLigneArr = 0
@@ -70,7 +70,7 @@ def getEndOfBlock(blockNumber):
                 compteur = compteur + 1
         
 def getNumberOfBlockWithStart(startLine):
-    f = open(path + filename, "r")
+    f = open(file, "r")
     lines = f.readlines()
     compteur = 0
 
@@ -84,7 +84,7 @@ def getNumberOfBlockWithStart(startLine):
     return compteur
 
 def getNumberOfLinesWhereBlockStarts():
-    f = open(path + filename, "r")
+    f = open(file, "r")
     lines = f.readlines()
     compteur = 0
     blockStarts = []
@@ -100,7 +100,7 @@ def getNumberOfLinesWhereBlockStarts():
     return blockStarts
   
 def getEndOfBlockWithLineNumber(lineNumber):
-    f = open(path + filename, "r")
+    f = open(file, "r")
     lines = f.readlines()
     nbLigneArr = lineNumber
 
@@ -139,7 +139,7 @@ def getAuteurs(titreNum):
             return content
 
 def getAbstract(absStart):
-    f = open(path + filename, "r")
+    f = open(file, "r")
     lines = f.readlines()
     content = ""
     finalContent = ""
@@ -156,7 +156,7 @@ def getAbstract(absStart):
         finalContent = finalContent + content  
 
 def getReferenceStart():
-    f = open(path + filename, "r")
+    f = open(file, "r")
     lines = f.readlines()
     nbLigneArr = len(lines)
     content = ""
@@ -171,8 +171,11 @@ def getReferenceStart():
         if "eferences" in content:
             return nbLigneArr
 
+        if "REFERENCES" in content:
+            return nbLigneArr
+
 def getReference(refStart):
-    f = open(path + filename, "r")
+    f = open(file, "r")
     lines = f.readlines()
     content = ""
 
@@ -181,7 +184,7 @@ def getReference(refStart):
     return content
 
 def getContentFromLine(lineNumber):
-    f = open(path + filename, "r")
+    f = open(file, "r")
     lines = f.readlines()
     content = ""
 
@@ -197,7 +200,7 @@ def getContentFromLine(lineNumber):
     return content
 
 def getCoordinatesFromLine(lineNumber):
-    f = open(path + filename, "r")
+    f = open(file, "r")
     lines = f.readlines()
     coordinates = []
 
@@ -213,7 +216,7 @@ def getCoordinatesFromLine(lineNumber):
     return coordinates
 
 def getStartOfBlockWithYMin():   
-    f = open(path + filename, "r")
+    f = open(file, "r")
     lines = f.readlines()
     table = []
 
@@ -224,7 +227,7 @@ def getStartOfBlockWithYMin():
                 return i
 
 def getStartOfBlockWhereWord():
-    f = open(path + filename, "r")
+    f = open(file, "r")
     lines = f.readlines()
     found = False
 
@@ -241,6 +244,7 @@ def getStartOfBlockWhereWord():
             if linesTable[j] == "<block" and found == True:
                 return i + 1
 
+
 def launch():
     initializeTxt(fileToWrite)
 
@@ -256,28 +260,19 @@ def launch():
     # Abstract
     absStart = getStartOfBlockWhereWord()
     abstract = getAbstract(absStart)
-
+    
     # References
     referenceStart = getReferenceStart()
     reference = getReference(referenceStart)
-    
-    # Écriture + Mise en forme
-    writeInTxt(fileToWrite, " TITRE : ")
-    writeInTxt(fileToWrite, titrePapier)
-    writeInTxt(fileToWrite, "\n")
-    jumpLine(fileToWrite)
-    writeInTxt(fileToWrite, " AUTEURS : ")
-    writeInTxt(fileToWrite, auteurs)
-    writeInTxt(fileToWrite, "\n")
-    jumpLine(fileToWrite)
-    writeInTxt(fileToWrite, " ABSTRACT : ")
-    writeInTxt(fileToWrite, abstract)
-    writeInTxt(fileToWrite, "\n")
-    jumpLine(fileToWrite)
-    writeInTxt(fileToWrite, " REFERENCES : ")
-    writeInTxt(fileToWrite, reference)
-    writeInTxt(fileToWrite, "\n")
-    jumpLine(fileToWrite)
+
+    if sys.argv[4] == "-t":
+        e = open(fileToWrite, 'w')
+        e.write(filename + ".pdf" +"\n"+ titrePapier +"\n"+ auteurs +"\n"+ abstract +"\n"+ reference)
+        e.close()
+    else:
+        e = open(fileToWrite, 'w')
+        e.write("<article> \n\t<preamble> "+ filename + ".pdf" +" </preamble> \n\t<titre> "+ titrePapier +" </titre> \n\t<auteur> "+ auteurs +" </auteur> \n\t<abstract> "+ abstract +" </abstract> \n\t<biblio> "+ reference +" </biblio> \n</article>")
+        e.close()
 
 # Lancer le programme
 launch()
