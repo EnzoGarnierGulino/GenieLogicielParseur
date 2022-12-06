@@ -2,7 +2,7 @@
 
 # <<<<<<< HEAD
 path = "../Corpus/"
-filename = "ACL2004-HEADLINE.txt"
+filename = "mikheev.txt"
 fileToWrite = "resultat.txt"
 # =======
 # import sys
@@ -149,9 +149,36 @@ def getAbstract(absStart):
         if content != "":
             if "Introduction" in content:
                 return finalContent
-            elif "NTRODUCTION" in content:
+            if "NTRODUCTION" in content:
                 return finalContent
-        finalContent = finalContent + content      
+            if "INTRODUCTION" in content:
+                return finalContent
+        finalContent = finalContent + content  
+
+def getReferenceStart():
+    f = open(path + filename, "r")
+    lines = f.readlines()
+    nbLigneArr = len(lines)
+    content = ""
+
+    for i in reversed(range(0, len(lines))):
+        nbLigneArr = nbLigneArr - 1
+        content = getContentFromLine(i)
+
+        if "References" in content:
+            return nbLigneArr
+
+        if "eferences" in content:
+            return nbLigneArr
+
+def getReference(refStart):
+    f = open(path + filename, "r")
+    lines = f.readlines()
+    content = ""
+
+    for i in range(refStart, len(lines)):
+        content = content + getContentFromLine(i)
+    return content
 
 def getContentFromLine(lineNumber):
     f = open(path + filename, "r")
@@ -207,7 +234,7 @@ def getStartOfBlockWhereWord():
 
         ## Si on croise certains mots définis dans le if
         content = getContentFromLine(i)
-        if "Abstract" or "In" or "The" or "This" or "As" in content:
+        if "Abstract" or "In" or "The" or "This" or "As" or "We" in content:
             found = True
 
         for j in range(0, len(linesTable)):
@@ -229,6 +256,10 @@ def launch():
     # Abstract
     absStart = getStartOfBlockWhereWord()
     abstract = getAbstract(absStart)
+
+    # References
+    referenceStart = getReferenceStart()
+    reference = getReference(referenceStart)
     
     # Écriture + Mise en forme
     writeInTxt(fileToWrite, " TITRE : ")
@@ -241,6 +272,10 @@ def launch():
     jumpLine(fileToWrite)
     writeInTxt(fileToWrite, " ABSTRACT : ")
     writeInTxt(fileToWrite, abstract)
+    writeInTxt(fileToWrite, "\n")
+    jumpLine(fileToWrite)
+    writeInTxt(fileToWrite, " REFERENCES : ")
+    writeInTxt(fileToWrite, reference)
     writeInTxt(fileToWrite, "\n")
     jumpLine(fileToWrite)
 
