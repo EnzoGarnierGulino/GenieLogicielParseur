@@ -5,11 +5,11 @@ path = "../Corpus/"
 filename = "mikheev.txt"
 fileToWrite = "resultat.txt"
 # =======
-# import sys
+import sys
 
-# path = sys.argv[1]
-# filename = sys.argv[2]
-# fileToWrite = sys.argv[3]
+path = sys.argv[1]
+filename = sys.argv[2]
+fileToWrite = sys.argv[3]
 # >>>>>>> 9944f18e426c22f084c69829a1e234175bf34927
 file = path + filename
 
@@ -18,7 +18,7 @@ file = path + filename
 startOfBlock = 0
 endOfBlock = 0
 titleValue = 60
-differenceMax = 25
+differenceMax = 20
 
 ## Fonctions
 
