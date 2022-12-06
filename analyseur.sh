@@ -8,7 +8,18 @@ if [[ ! -z "$dossier_origine" && -d "$dossier_origine" && $type_sortie == "-t" |
 then
     rm -rf "$dossier_origine""_txt"
     mkdir "$dossier_origine""_txt"
-    for f in "$dossier_origine"*.pdf
+
+    options=()
+    for t in "$dossier_origine"*.pdf
+    do
+        options+=("$t")
+        options+=("")
+        options+=(on)
+    done
+    choices=$(dialog --separate-output --checklist "Selection des pdf de $dossier_origine" 22 90 16 "${options[@]}" 2>&1 >/dev/tty)
+    clear
+    echo "En Cours"
+    for f in $choices
     do
         nom_origin=$(echo "$f" | grep -o "[^/]*$" | cut -d'.' -f1)
         if [ $type_sortie == "-t" ]
@@ -22,6 +33,7 @@ then
         python3 XMLReader.py "$dossier_origine" $nom_origin".html" "$nom_dest" $type_sortie
         rm "$dossier_origine""$nom_origin"".html"
     done
+    clear
     echo "Done"
 else
     echo "Erreur au niveau des arguments veillez entre -t ou -x en premier argument et le dossier en deuxieme argument"
