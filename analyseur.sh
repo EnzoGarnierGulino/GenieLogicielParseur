@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 type_sortie=$1
@@ -14,13 +15,14 @@ then
     do
         options+=("$t")
         options+=("")
-        options+=(off)
+        options+=("on")
     done
     choices=$(dialog --separate-output --checklist "Selection des pdf de $dossier_origine" 22 90 16 "${options[@]}" 2>&1 >/dev/tty)
+    clear
+    echo "En Cours"
     for f in $choices
     do
-        clear
-        echo "En Cours" $f
+        echo $f
         nom_origin=$(echo "$f" | grep -o "[^/]*$" | cut -d'.' -f1)
         if [ $type_sortie == "-t" ]
         then
@@ -33,8 +35,8 @@ then
         python3 XMLReader.py "$dossier_origine" "$nom_origin" "$nom_dest" "$type_sortie"
         rm "$dossier_origine""$nom_origin"".html"
     done
-    clear
-    echo "Success"
+    # clear
+    echo "Done"
 else
     echo "Erreur au niveau des arguments veillez entre -t ou -x en premier argument et le dossier en deuxieme argument"
 fi
